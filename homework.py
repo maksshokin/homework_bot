@@ -1,11 +1,11 @@
-import telegram
+from asyncio import exceptions
 import time
-import requestspip
+import requests
 import logging
 import sys
 import os
-import exceptions
 
+from telebot import TeleBot
 from dotenv import load_dotenv
 from http import HTTPStatus
 
@@ -109,7 +109,7 @@ def main():
                          ' переменных окружения')
         sys.exit('Отсутсвуют переменные окружения')
     # Создаем объект класса бота
-    bot = telegram.Bot(token=TELEGRAM_TOKEN)
+    bot = TeleBot(token=TELEGRAM_TOKEN)
     current_timestamp = int(time.time())
     current_report = {
         'name': '',
