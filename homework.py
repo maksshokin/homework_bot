@@ -132,14 +132,11 @@ def main():
             else:
                 current_report['output'] = 'Нет новых статусов работ.'
             if current_report != prev_report:
-                send = f' {current_report["name"]} {current_report["output"]}'
+                send = f'{HOMEWORK_VERDICTS[current_report["output"]]}'
                 send_message(bot, send)
                 prev_report = current_report.copy()
             else:
-                logging.debug('Статус не поменялся')
-        except exceptions.NotForSending as error:
-            message = f'Сбой в работе программы: {error}'
-            logging.error(message)
+                logging.debug('Статус не поменялся.')
         except Exception as error:
             message = f'Сбой в работе программы: {error}'
             current_report['output'] = message
