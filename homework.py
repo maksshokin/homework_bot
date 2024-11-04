@@ -1,6 +1,6 @@
 import telegram
 import time
-import requests
+import requestspip
 import logging
 import sys
 import os
