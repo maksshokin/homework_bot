@@ -85,7 +85,7 @@ def check_response(response):
         raise exceptions.EmptyResponseFromAPI('Пустой ответ от API')
     homeworks = response.get('homeworks')
     if not isinstance(homeworks, list):
-        raise KeyError('Homeworks не является списком')
+        raise TypeError('Homeworks не является списком')
     return homeworks
 
 
