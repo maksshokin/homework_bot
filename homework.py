@@ -32,7 +32,9 @@ def check_tokens():
     """Проверка доступности переменных окружения."""
     return all([TELEGRAM_TOKEN, PRACTICUM_TOKEN, TELEGRAM_CHAT_ID])
 
+
 def send_message(bot, message):
+    """Отправка сообщения."""
     try:
         logging.info('Начало отправки')
         bot.send_message(
@@ -88,6 +90,7 @@ def check_response(response):
 
 
 def parse_status(homework):
+    """Узнать статус"""
     if 'homework_name' not in homework:
         raise KeyError('В ответе отсутсвует ключ homework_name')
     homework_name = homework.get('homework_name')
@@ -129,7 +132,7 @@ def main():
             else:
                 current_report['output'] = 'Нет новых статусов работ.'
             if current_report != prev_report:
-                send = f' {current_report["name"]}, {current_report["output"]}'
+                send = f' {current_report["name"]} {current_report["output"]}'
                 send_message(bot, send)
                 prev_report = current_report.copy()
             else:
