@@ -10,3 +10,6 @@
 2024-11-04 10:49:51,393, INFO, Путь - e:\Dev\homework_bot\homework.py, Файл - homework.py, Функция - get_api_answer, Номер строки - 60, Начало запроса: url = https://practicum.yandex.ru/api/user_api/homework_statuses/,headers = {'Authorization': 'OAuth y0_AgAAAAAbfctQAAYckQAAAAEXHQm7AAApbL6JUgJNhL2Radz5j6CnOKyYSA'},params = {'from_date': 1730706591}
 2024-11-04 10:49:51,517, INFO, Путь - e:\Dev\homework_bot\homework.py, Файл - homework.py, Функция - send_message, Номер строки - 39, Начало отправки
 2024-11-04 10:49:51,718, INFO, Путь - e:\Dev\homework_bot\homework.py, Файл - homework.py, Функция - send_message, Номер строки - 48, Сообщение отправлено   Нет новых статусов работ.
+2024-11-04 10:50:31,556, INFO, Путь - e:\Dev\homework_bot\homework.py, Файл - homework.py, Функция - get_api_answer, Номер строки - 60, Начало запроса: url = https://practicum.yandex.ru/api/user_api/homework_statuses/,headers = {'Authorization': 'OAuth y0_AgAAAAAbfctQAAYckQAAAAEXHQm7AAApbL6JUgJNhL2Radz5j6CnOKyYSA'},params = {'from_date': 1730706631}
+2024-11-04 10:50:31,724, INFO, Путь - e:\Dev\homework_bot\homework.py, Файл - homework.py, Функция - send_message, Номер строки - 39, Начало отправки
+2024-11-04 10:50:32,150, INFO, Путь - e:\Dev\homework_bot\homework.py, Файл - homework.py, Функция - send_message, Номер строки - 48, Сообщение отправлено   Нет новых статусов работ.
