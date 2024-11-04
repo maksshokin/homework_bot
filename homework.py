@@ -45,7 +45,7 @@ def send_message(bot, message):
         raise exceptions.TelegramError(
             f'Не удалось отправить сообщение {error}')
     else:
-        logging.info(f'Сообщение отправлено {message}')
+        logging.debug(f'Сообщение отправлено {message}')
 
 
 def get_api_answer(current_timestamp):
