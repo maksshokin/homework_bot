@@ -111,7 +111,6 @@ def main():
         logging.critical('Отсутствует необходимое кол-во'
                          ' переменных окружения')
         sys.exit('Отсутсвуют переменные окружения')
-    # Создаем объект класса бота
     bot = TeleBot(token=TELEGRAM_TOKEN)
     current_timestamp = int(time.time())
     current_report = {
