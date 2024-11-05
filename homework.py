@@ -1,4 +1,3 @@
-from asyncio import exceptions
 import time
 import requests
 import logging
@@ -8,6 +7,8 @@ import os
 from telebot import TeleBot
 from dotenv import load_dotenv
 from http import HTTPStatus
+from asyncio import exceptions
+
 
 load_dotenv()
 
