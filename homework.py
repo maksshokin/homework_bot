@@ -1,8 +1,9 @@
 
 import os
+import time
 
 from dotenv import load_dotenv
-
+from telebot import TeleBot
 
 load_dotenv()
 
@@ -29,23 +30,29 @@ def check_tokens():
 
 def send_message(bot, message):
     """Отправка сообщения."""
+    bot.send_message(TELEGRAM_CHAT_ID, message)
 
 
 
-def get_api_answer(current_timestamp):
+def get_api_answer():
     """Получить статус домашней работы."""
 
 
 
-def check_response(response):
+def check_response():
     """Проверить валидность ответа."""
 
 
-def parse_status(homework):
+def parse_status():
     """Узнать статус."""
 
 
 
 def main():
-    """Основная логика работы бота."""
-
+    """Основная логика работы."""
+    bot = TeleBot(token=TELEGRAM_TOKEN)
+    while True:
+        try:
+            send_message(bot, 'message')
+            time.sleep(600)
+main()
