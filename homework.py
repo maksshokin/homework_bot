@@ -1,8 +1,10 @@
 
 import os
+import sys
 import time
 
 from dotenv import load_dotenv
+import requests
 from telebot import TeleBot
 
 load_dotenv()
@@ -26,6 +28,15 @@ HOMEWORK_VERDICTS = {
 
 def check_tokens():
     """Проверка доступности переменных окружения."""
+    if (
+        len(PRACTICUM_TOKEN) != 0 and
+        len(TELEGRAM_TOKEN) != 0 and
+        len(TELEGRAM_CHAT_ID) != 0
+    ):
+        return True
+    else:
+        sys.exit()
+
 
 
 def send_message(bot, message):
@@ -33,10 +44,14 @@ def send_message(bot, message):
     bot.send_message(TELEGRAM_CHAT_ID, message)
 
 
-
 def get_api_answer():
     """Получить статус домашней работы."""
-
+    api_answer = requests.get(
+        ENDPOINT,
+        headers=HEADERS,
+        params={'from_date': time.localtime()}
+    )
+    return api_answer.json()
 
 
 def check_response():
@@ -47,12 +62,15 @@ def parse_status():
     """Узнать статус."""
 
 
-
 def main():
     """Основная логика работы."""
-    bot = TeleBot(token=TELEGRAM_TOKEN)
-    while True:
-        try:
-            send_message(bot, 'message')
-            time.sleep(600)
-main()
+    if check_tokens():
+        bot = TeleBot(token=TELEGRAM_TOKEN)
+        while True:
+            try:
+                send_message(bot, 'message')      
+            finally:
+                time.sleep(600)
+
+if __name__ == "__main__":
+    main()
