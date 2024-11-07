@@ -1,4 +1,5 @@
 
+from asyncio import exceptions
 from http import HTTPStatus
 import logging
 import os
@@ -57,11 +58,14 @@ def get_api_answer(local_time):
     )
     if api_answer.status_code == HTTPStatus.OK:
         return api_answer.json()
+    else:
+        raise exceptions.InvalidResponseCode()
 
 
 def check_response(response):
     """Проверить валидность ответа."""
-    return response.get('homeworks')
+    if 'homeworks' in response:
+        return response.get('homeworks')
 
 
 def parse_status(status):
