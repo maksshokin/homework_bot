@@ -1,9 +1,12 @@
 
+from http import HTTPStatus
+import logging
 import os
 import sys
 import time
 
 from dotenv import load_dotenv
+from pytest import warns
 import requests
 from telebot import TeleBot
 
@@ -35,6 +38,7 @@ def check_tokens():
     ):
         return True
     else:
+        logging.critical()
         sys.exit()
 
 
@@ -44,22 +48,26 @@ def send_message(bot, message):
     bot.send_message(TELEGRAM_CHAT_ID, message)
 
 
-def get_api_answer():
+def get_api_answer(local_time):
     """Получить статус домашней работы."""
     api_answer = requests.get(
         ENDPOINT,
         headers=HEADERS,
-        params={'from_date': time.localtime()}
+        params={'from_date': local_time}
     )
-    return api_answer.json()
+    if api_answer.status_code == HTTPStatus.OK:
+        return api_answer.json()
 
 
-def check_response():
+def check_response(response):
     """Проверить валидность ответа."""
+    return response.get('homeworks')
 
 
-def parse_status():
+def parse_status(status):
     """Узнать статус."""
+    if 'homework_name' in status.get():
+        return status.get('status')
 
 
 def main():
@@ -68,7 +76,11 @@ def main():
         bot = TeleBot(token=TELEGRAM_TOKEN)
         while True:
             try:
-                send_message(bot, 'message')      
+                response = get_api_answer(int(time.time()))
+                print(response)
+                message = check_response(response)
+                print(message)
+                send_message(bot, message)
             finally:
                 time.sleep(600)
 
