@@ -32,21 +32,27 @@ HOMEWORK_VERDICTS = {
 
 def check_tokens():
     """Проверка доступности переменных окружения."""
-    if (
-        len(PRACTICUM_TOKEN) != 0 and
-        len(TELEGRAM_TOKEN) != 0 and
-        len(TELEGRAM_CHAT_ID) != 0
-    ):
+    if all([
+        len(PRACTICUM_TOKEN),
+        len(TELEGRAM_TOKEN),
+        len(TELEGRAM_CHAT_ID) 
+    ]):
         return True
     else:
-        logging.critical()
+        logging.critical(f'Нет всех переменных')
         sys.exit()
 
 
 
 def send_message(bot, message):
     """Отправка сообщения."""
-    bot.send_message(TELEGRAM_CHAT_ID, message)
+    try:
+        bot.send_message(TELEGRAM_CHAT_ID, message)
+    except Exception:
+        logging.error(f'Сообщение не отправлено, из-за ошибки.')
+        raise Exception
+    else:
+        logging.debug(f'Сообщение отправлено: {message}')
 
 
 def get_api_answer(local_time):
@@ -64,8 +70,13 @@ def get_api_answer(local_time):
 
 def check_response(response):
     """Проверить валидность ответа."""
-    if 'homeworks' in response:
-        return response.get('homeworks')
+    if isinstance(response, dict):
+        if 'homeworks' in response:
+            return response.get('homeworks')
+        else:
+             raise exceptions.EmptyResponseFromAPI('Пустой API')
+    else:
+        raise TypeError('API не dict')
 
 
 def parse_status(status):
@@ -89,4 +100,5 @@ def main():
                 time.sleep(600)
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
     main()
