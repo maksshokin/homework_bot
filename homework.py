@@ -107,13 +107,24 @@ def main():
     """Основа."""
     if check_tokens():
         bot = TeleBot(token=TELEGRAM_TOKEN)
+        prev_message = ''
+        prev_status = ''
         while True:
             try:
                 response = get_api_answer(int(time.time()))
-                print(response)
                 message = check_response(response)
                 print(message)
-                send_message(bot, message)
+                if response['homeworks'] == []:
+                    logging.debug('Нет активных работ.')
+                    message = 'Нет активных работ.'
+                else:
+                    current_status = message[0].get('status')
+                if current_status != prev_status:
+                    message =  f'{HOMEWORK_VERDICTS[current_status]}'
+                    prev_status = current_status
+                if prev_message != message:
+                    send_message(bot, message)
+                    prev_message = message
             finally:
                 time.sleep(600)
 
