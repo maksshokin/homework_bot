@@ -86,13 +86,25 @@ def check_response(response):
 
 def parse_status(status):
     """Узнать статус."""
-    homework = status.get()
-    if 'homework_name' in homework:
-        return status.get('status')
+    try:
+        if 'homework_name' in status:
+            verdict = status.get('status')
+            name = status.get('homework_name')
+            if verdict in HOMEWORK_VERDICTS:
+                return (
+                    f'Изменился статус домашней работы"{name}".'
+                    f'{HOMEWORK_VERDICTS[verdict]}'
+                )
+            else:
+                raise ValueError()
+        else:
+            raise KeyError()
+    except TypeError:
+        pass
 
 
 def main():
-    """Основная логика работы."""
+    """Основа."""
     if check_tokens():
         bot = TeleBot(token=TELEGRAM_TOKEN)
         while True:
