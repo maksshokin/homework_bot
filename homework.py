@@ -111,7 +111,6 @@ def main():
             try:
                 response = get_api_answer(int(time.time()))
                 message = check_response(response)
-                print(message)
                 if response['homeworks'] == []:
                     logging.debug('Нет активных работ.')
                     message = 'Нет активных работ.'
