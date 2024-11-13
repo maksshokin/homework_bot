@@ -33,9 +33,9 @@ HOMEWORK_VERDICTS = {
 def check_tokens():
     """Проверка доступности переменных окружения."""
     if all([
-        len(PRACTICUM_TOKEN),
-        len(TELEGRAM_TOKEN),
-        len(TELEGRAM_CHAT_ID) 
+        PRACTICUM_TOKEN,
+        TELEGRAM_TOKEN,
+        TELEGRAM_CHAT_ID 
     ]):
         return True
     else:
@@ -57,31 +57,37 @@ def send_message(bot, message):
 
 def get_api_answer(local_time):
     """Получить статус домашней работы."""
-    api_answer = requests.get(
-        ENDPOINT,
-        headers=HEADERS,
-        params={'from_date': local_time}
-    )
-    if api_answer.status_code == HTTPStatus.OK:
-        return api_answer.json()
-    else:
-        raise exceptions.InvalidResponseCode()
+    try:
+        api_answer = requests.get(
+            ENDPOINT,
+            headers=HEADERS,
+            params={'from_date': local_time}
+        )
+        if api_answer.status_code == HTTPStatus.OK:
+            return api_answer.json()
+        else:
+            raise exceptions.InvalidResponseCode()
+    except Exception:
+        raise requests.RequestException()
 
 
 def check_response(response):
     """Проверить валидность ответа."""
-    if isinstance(response, dict):
-        if 'homeworks' in response:
-            return response.get('homeworks')
-        else:
-             raise exceptions.EmptyResponseFromAPI('Пустой API')
+    if not isinstance(response, dict):
+        raise TypeError()
+    if 'homeworks' in response:
+        homeworks = response.get('homeworks')
     else:
-        raise TypeError('API не dict')
+        raise exceptions.EmptyResponseFromAPI('Пустой API')
+    if not isinstance(homeworks, list):
+        raise TypeError()
+    return homeworks
 
 
 def parse_status(status):
     """Узнать статус."""
-    if 'homework_name' in status.get():
+    homework = status.get()
+    if 'homework_name' in homework:
         return status.get('status')
 
 
@@ -98,6 +104,7 @@ def main():
                 send_message(bot, message)
             finally:
                 time.sleep(600)
+
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
