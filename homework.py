@@ -57,15 +57,18 @@ def send_message(bot, message):
 
 def get_api_answer(local_time):
     """Получить статус домашней работы."""
-    api_answer = requests.get(
-        ENDPOINT,
-        headers=HEADERS,
-        params={'from_date': local_time}
-    )
-    if api_answer.status_code == HTTPStatus.OK:
-        return api_answer.json()
-    else:
-        raise exceptions.InvalidResponseCode()
+    try:
+        api_answer = requests.get(
+            ENDPOINT,
+            headers=HEADERS,
+            params={'from_date': local_time}
+        )
+        if api_answer.status_code == HTTPStatus.OK:
+            return api_answer.json()
+        else:
+            raise exceptions.InvalidResponseCode()
+    except Exception:
+        raise exceptions.ConnectinError()
 
 
 def check_response(response):
