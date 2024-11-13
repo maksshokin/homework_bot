@@ -57,18 +57,15 @@ def send_message(bot, message):
 
 def get_api_answer(local_time):
     """Получить статус домашней работы."""
-    try:
-        api_answer = requests.get(
-            ENDPOINT,
-            headers=HEADERS,
-            params={'from_date': local_time}
-        )
-        if api_answer.status_code == HTTPStatus.OK:
-            return api_answer.json()
-        else:
-            raise exceptions.InvalidResponseCode()
-    except Exception:
-        raise requests.RequestException()
+    api_answer = requests.get(
+        ENDPOINT,
+        headers=HEADERS,
+        params={'from_date': local_time}
+    )
+    if api_answer.status_code == HTTPStatus.OK:
+        return api_answer.json()
+    else:
+        raise exceptions.InvalidResponseCode()
 
 
 def check_response(response):
@@ -89,11 +86,11 @@ def parse_status(status):
     try:
         if 'homework_name' in status:
             verdict = status.get('status')
-            name = status.get('homework_name')
+            homework_name = status.get('homework_name')
             if verdict in HOMEWORK_VERDICTS:
                 return (
-                    f'Изменился статус домашней работы"{name}".'
-                    f'{HOMEWORK_VERDICTS[verdict]}'
+                    f'Изменился статус проверки работы "{homework_name}".'
+                    f' {HOMEWORK_VERDICTS[verdict]}'
                 )
             else:
                 raise ValueError()
