@@ -1,15 +1,15 @@
-
-from asyncio import exceptions
-from http import HTTPStatus
 import logging
 import os
 import sys
 import time
+import requests
 
+from asyncio import exceptions
 from dotenv import load_dotenv
 from pytest import warns
-import requests
 from telebot import TeleBot
+from http import HTTPStatus
+
 
 load_dotenv()
 
