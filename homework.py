@@ -6,7 +6,6 @@ import requests
 
 from asyncio import exceptions
 from dotenv import load_dotenv
-from pytest import warns
 from telebot import TeleBot
 from http import HTTPStatus
 
@@ -35,13 +34,12 @@ def check_tokens():
     if all([
         PRACTICUM_TOKEN,
         TELEGRAM_TOKEN,
-        TELEGRAM_CHAT_ID 
+        TELEGRAM_CHAT_ID
     ]):
         return True
     else:
-        logging.critical(f'Нет всех переменных')
+        logging.critical('Нет всех переменных')
         sys.exit()
-
 
 
 def send_message(bot, message):
@@ -49,7 +47,7 @@ def send_message(bot, message):
     try:
         bot.send_message(TELEGRAM_CHAT_ID, message)
     except Exception:
-        logging.error(f'Сообщение не отправлено, из-за ошибки.')
+        logging.error('Сообщение не отправлено, из-за ошибки.')
         raise Exception
     else:
         logging.debug(f'Сообщение отправлено: {message}')
@@ -120,7 +118,7 @@ def main():
                 else:
                     current_status = message[0].get('status')
                 if current_status != prev_status:
-                    message =  f'{HOMEWORK_VERDICTS[current_status]}'
+                    message = f'{HOMEWORK_VERDICTS[current_status]}'
                     prev_status = current_status
                 if prev_message != message:
                     send_message(bot, message)
