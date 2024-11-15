@@ -12,7 +12,6 @@ from dotenv import load_dotenv
 from telebot import TeleBot
 
 
-
 load_dotenv()
 
 
@@ -44,8 +43,8 @@ def checker(token):
 def check_tokens():
     """Проверка доступности переменных окружения."""
     return (
-        checker(PRACTICUM_TOKEN)*
-        checker(TELEGRAM_TOKEN)*
+        checker(PRACTICUM_TOKEN) * 
+        checker(TELEGRAM_TOKEN) * 
         checker(TELEGRAM_CHAT_ID)
     )
 
