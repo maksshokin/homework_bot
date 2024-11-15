@@ -1,14 +1,16 @@
 import os
 import sys
 import time
-
 import logging
+
 import requests
 
 from asyncio import exceptions
+from http import HTTPStatus
+
 from dotenv import load_dotenv
 from telebot import TeleBot
-from http import HTTPStatus
+
 
 
 load_dotenv()
@@ -30,18 +32,22 @@ HOMEWORK_VERDICTS = {
 }
 
 
+def checker(token):
+    """Дочь check_tokens."""
+    inspector = True
+    if not token:
+        logging.critical(f'Нет {token}')
+        inspector = False
+    return inspector
+
+
 def check_tokens():
     """Проверка доступности переменных окружения."""
-    if not PRACTICUM_TOKEN:
-        logging.critical(f'Нет {PRACTICUM_TOKEN}')
-        return False
-    if not TELEGRAM_TOKEN:
-        logging.critical(f'Нет {TELEGRAM_TOKEN}')
-        return False
-    if not TELEGRAM_CHAT_ID:
-        logging.critical(f'Нет {TELEGRAM_CHAT_ID}')
-        return False
-    return True
+    return (
+        checker(PRACTICUM_TOKEN)*
+        checker(TELEGRAM_TOKEN)*
+        checker(TELEGRAM_CHAT_ID)
+    )
 
 
 def send_message(bot, message):
