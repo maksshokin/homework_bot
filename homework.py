@@ -43,9 +43,9 @@ def checker(token):
 def check_tokens():
     """Проверка доступности переменных окружения."""
     return (
-        checker(PRACTICUM_TOKEN) * 
-        checker(TELEGRAM_TOKEN) * 
-        checker(TELEGRAM_CHAT_ID)
+        checker(PRACTICUM_TOKEN)
+        * checker(TELEGRAM_TOKEN)
+        * checker(TELEGRAM_CHAT_ID)
     )
 
 
