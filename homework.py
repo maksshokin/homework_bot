@@ -1,7 +1,8 @@
-import logging
 import os
 import sys
 import time
+
+import logging
 import requests
 
 from asyncio import exceptions
@@ -72,33 +73,33 @@ def get_api_answer(local_time):
 def check_response(response):
     """Проверить валидность ответа."""
     if not isinstance(response, dict):
-        raise TypeError()
-    if 'homeworks' in response:
-        homeworks = response.get('homeworks')
-    else:
-        raise exceptions.EmptyResponseFromAPI('Пустой API')
+        raise TypeError(
+            'Ошибка в типе API.'
+            f'{response}, type - {type(response)}'
+        )
+    if not 'homeworks' in response:
+        raise exceptions.AttributeError('Пустой API')
+    homeworks = response.get('homeworks')
     if not isinstance(homeworks, list):
-        raise TypeError()
+        raise TypeError(
+            'homeworks not list.'
+            f'{homeworks}, type -{type(homeworks)}'
+        )
     return homeworks
 
 
 def parse_status(status):
     """Узнать статус."""
-    try:
-        if 'homework_name' in status:
-            verdict = status.get('status')
-            homework_name = status.get('homework_name')
-            if verdict in HOMEWORK_VERDICTS:
-                return (
-                    f'Изменился статус проверки работы "{homework_name}".'
-                    f' {HOMEWORK_VERDICTS[verdict]}'
-                )
-            else:
-                raise ValueError()
-        else:
-            raise KeyError()
-    except TypeError:
-        pass
+    if not 'homework_name' in status:
+        raise KeyError('Нет ключа homework_name.')
+    verdict = status.get('status')
+    homework_name = status.get('homework_name')
+    if not verdict in HOMEWORK_VERDICTS:
+        raise ValueError('Неизвестный статус работы.')
+    return (
+        f'Изменился статус проверки работы "{homework_name}".'
+        f' {HOMEWORK_VERDICTS[verdict]}'
+    )
 
 
 def main():
@@ -111,7 +112,7 @@ def main():
             try:
                 response = get_api_answer(int(time.time()))
                 message = check_response(response)
-                if response['homeworks'] == []:
+                if not response['homeworks']:
                     logging.debug('Нет активных работ.')
                     message = 'Нет активных работ.'
                 else:
@@ -123,7 +124,7 @@ def main():
                     send_message(bot, message)
                     prev_message = message
             finally:
-                time.sleep(600)
+                time.sleep(RETRY_PERIOD)
 
 
 if __name__ == "__main__":
