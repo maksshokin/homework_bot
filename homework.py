@@ -32,24 +32,26 @@ HOMEWORK_VERDICTS = {
 
 def check_tokens():
     """Проверка доступности переменных окружения."""
-    if all([
-        PRACTICUM_TOKEN,
-        TELEGRAM_TOKEN,
-        TELEGRAM_CHAT_ID
-    ]):
-        return True
-    else:
-        logging.critical('Нет всех переменных')
-        sys.exit()
+    if not PRACTICUM_TOKEN:
+        logging.critical(f'Нет {PRACTICUM_TOKEN}')
+        return False
+    if not TELEGRAM_TOKEN:
+        logging.critical(f'Нет {TELEGRAM_TOKEN}')
+        return False
+    if not TELEGRAM_CHAT_ID:
+        logging.critical(f'Нет {TELEGRAM_CHAT_ID}')
+        return False
+    return True
 
 
 def send_message(bot, message):
     """Отправка сообщения."""
     try:
+        logging.info('Начало отправки сообщения.')
         bot.send_message(TELEGRAM_CHAT_ID, message)
     except Exception:
         logging.error('Сообщение не отправлено, из-за ошибки.')
-        raise Exception
+        raise exceptions.ConnectinError('Ошибка Telegram')
     else:
         logging.debug(f'Сообщение отправлено: {message}')
 
@@ -57,17 +59,18 @@ def send_message(bot, message):
 def get_api_answer(local_time):
     """Получить статус домашней работы."""
     try:
+        logging.info('Начало запроса к API.')
         api_answer = requests.get(
             ENDPOINT,
             headers=HEADERS,
             params={'from_date': local_time}
         )
-        if api_answer.status_code == HTTPStatus.OK:
-            return api_answer.json()
-        else:
-            raise exceptions.InvalidResponseCode()
     except Exception:
-        raise exceptions.ConnectinError()
+        raise exceptions.ConnectinError('Нет ответа')
+    if api_answer.status_code == HTTPStatus.OK:
+        return api_answer.json()
+    raise exceptions.InvalidResponseCode()
+    
 
 
 def check_response(response):
@@ -104,27 +107,28 @@ def parse_status(status):
 
 def main():
     """Основа."""
-    if check_tokens():
-        bot = TeleBot(token=TELEGRAM_TOKEN)
-        prev_message = ''
-        prev_status = ''
-        while True:
-            try:
-                response = get_api_answer(int(time.time()))
-                message = check_response(response)
-                if not response['homeworks']:
-                    logging.debug('Нет активных работ.')
-                    message = 'Нет активных работ.'
-                else:
-                    current_status = message[0].get('status')
-                if current_status != prev_status:
-                    message = f'{HOMEWORK_VERDICTS[current_status]}'
-                    prev_status = current_status
-                if prev_message != message:
-                    send_message(bot, message)
-                    prev_message = message
-            finally:
-                time.sleep(RETRY_PERIOD)
+    if not check_tokens():
+        sys.exit()
+    bot = TeleBot(token=TELEGRAM_TOKEN)
+    prev_message = ''
+    prev_status = ''
+    while True:
+        try:
+            response = get_api_answer(int(time.time()))
+            message = check_response(response)
+            if not response['homeworks']:
+                logging.debug('Нет активных работ.')
+                message = 'Нет активных работ.'
+            else:
+                current_status = message[0].get('status')
+            if current_status != prev_status:
+                message = f'{HOMEWORK_VERDICTS[current_status]}'
+                prev_status = current_status
+            if prev_message != message:
+                send_message(bot, message)
+                prev_message = message
+        finally:
+            time.sleep(RETRY_PERIOD)
 
 
 if __name__ == "__main__":
