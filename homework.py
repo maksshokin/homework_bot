@@ -69,8 +69,7 @@ def get_api_answer(local_time):
         raise exceptions.ConnectinError('Нет ответа')
     if api_answer.status_code == HTTPStatus.OK:
         return api_answer.json()
-    raise exceptions.InvalidResponseCode()
-    
+    raise exceptions.InvalidResponseCode('Нет ответа')
 
 
 def check_response(response):
@@ -80,7 +79,7 @@ def check_response(response):
             'Ошибка в типе API.'
             f'{response}, type - {type(response)}'
         )
-    if not 'homeworks' in response:
+    if 'homeworks' not in response:
         raise exceptions.AttributeError('Пустой API')
     homeworks = response.get('homeworks')
     if not isinstance(homeworks, list):
@@ -93,11 +92,11 @@ def check_response(response):
 
 def parse_status(status):
     """Узнать статус."""
-    if not 'homework_name' in status:
+    if 'homework_name' not in status:
         raise KeyError('Нет ключа homework_name.')
     verdict = status.get('status')
     homework_name = status.get('homework_name')
-    if not verdict in HOMEWORK_VERDICTS:
+    if verdict not in HOMEWORK_VERDICTS:
         raise ValueError('Неизвестный статус работы.')
     return (
         f'Изменился статус проверки работы "{homework_name}".'
