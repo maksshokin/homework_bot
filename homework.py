@@ -47,7 +47,6 @@ def check_tokens():
     return True
 
 
-
 def send_message(bot, message):
     """Отправка сообщения."""
     try:
