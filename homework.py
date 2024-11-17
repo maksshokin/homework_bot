@@ -1,3 +1,5 @@
+from asyncio import exceptions
+from http import HTTPStatus
 import logging
 import os
 import sys
@@ -5,11 +7,8 @@ import time
 
 import requests
 
-from asyncio import exceptions
-from http import HTTPStatus
 from dotenv import load_dotenv
 from telebot import TeleBot
-
 
 load_dotenv()
 
@@ -41,7 +40,7 @@ def check_tokens():
     for token_name in tokens.keys():
         if not tokens[token_name]:
             absent.append(token_name)
-    if len(absent) > 0:
+    if absent:
         logging.critical(f'Нет токенов {absent}')
         return False
     return True
@@ -97,9 +96,9 @@ def parse_status(status):
     """Узнать статус."""
     if 'homework_name' not in status:
         raise KeyError('Нет ключа homework_name.')
-    verdict = status["status"]
-    homework_name = status["homework_name"]
-    if status['status'] not in HOMEWORK_VERDICTS:
+    verdict = status['status']
+    homework_name = status['homework_name']
+    if  verdict not in HOMEWORK_VERDICTS:
         raise ValueError('Неизвестный статус работы.')
     return (
         f'Изменился статус проверки работы "{homework_name}".'
