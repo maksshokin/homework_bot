@@ -98,7 +98,7 @@ def parse_status(status):
         raise KeyError('Нет ключа homework_name.')
     verdict = status['status']
     homework_name = status['homework_name']
-    if  verdict not in HOMEWORK_VERDICTS:
+    if verdict not in HOMEWORK_VERDICTS:
         raise ValueError('Неизвестный статус работы.')
     return (
         f'Изменился статус проверки работы "{homework_name}".'
