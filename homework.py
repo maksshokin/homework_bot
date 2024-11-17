@@ -1,13 +1,12 @@
+import logging
 import os
 import sys
 import time
-import logging
 
 import requests
 
 from asyncio import exceptions
 from http import HTTPStatus
-
 from dotenv import load_dotenv
 from telebot import TeleBot
 
@@ -31,22 +30,22 @@ HOMEWORK_VERDICTS = {
 }
 
 
-def checker(token):
-    """Дочь check_tokens."""
-    inspector = True
-    if not token:
-        logging.critical(f'Нет {token}')
-        inspector = False
-    return inspector
-
-
 def check_tokens():
     """Проверка доступности переменных окружения."""
-    return (
-        checker(PRACTICUM_TOKEN)
-        * checker(TELEGRAM_TOKEN)
-        * checker(TELEGRAM_CHAT_ID)
-    )
+    tokens = {
+        'PRACTICUM_TOKEN': PRACTICUM_TOKEN,
+        'TELEGRAM_TOKEN': TELEGRAM_TOKEN,
+        'TELEGRAM_CHAT_ID': TELEGRAM_CHAT_ID
+    }
+    absent = []
+    for token_name in tokens.keys():
+        if not tokens[token_name]:
+            absent.append(token_name)
+    if len(absent) > 0:
+        logging.critical(f'Нет токенов {absent}')
+        return False
+    return True
+
 
 
 def send_message(bot, message):
@@ -86,7 +85,7 @@ def check_response(response):
         )
     if 'homeworks' not in response:
         raise exceptions.AttributeError('Пустой API')
-    homeworks = response.get('homeworks')
+    homeworks = response['homeworks']
     if not isinstance(homeworks, list):
         raise TypeError(
             'homeworks not list.'
@@ -99,9 +98,9 @@ def parse_status(status):
     """Узнать статус."""
     if 'homework_name' not in status:
         raise KeyError('Нет ключа homework_name.')
-    verdict = status.get('status')
-    homework_name = status.get('homework_name')
-    if verdict not in HOMEWORK_VERDICTS:
+    verdict = status["status"]
+    homework_name = status["homework_name"]
+    if status['status'] not in HOMEWORK_VERDICTS:
         raise ValueError('Неизвестный статус работы.')
     return (
         f'Изменился статус проверки работы "{homework_name}".'
